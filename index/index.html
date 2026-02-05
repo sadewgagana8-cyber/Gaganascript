@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAGANA SCRIPT | Universal</title>
+    <style>
+        :root {
+            --apple-blue: #0071e3;
+            --apple-red: #ff3b30;
+            --bg-body: #e5e5e7;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --text-main: #1d1d1f;
+            --text-sub: #86868b;
+            --editor-bg: rgba(232, 232, 237, 0.4);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode {
+            --bg-body: #121212;
+            --glass-bg: rgba(30, 30, 30, 0.85);
+            --text-main: #f5f5f7;
+            --text-sub: #a1a1a6;
+            --editor-bg: rgba(45, 45, 45, 0.5);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+
+        body.glass-dark {
+            --bg-body: radial-gradient(circle, #2c3e50, #000000);
+            --glass-bg: rgba(0, 0, 0, 0.4);
+            --text-main: #ffffff;
+            --text-sub: #d1d1d6;
+            --editor-bg: rgba(255, 255, 255, 0.1);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: var(--bg-body);
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.5s ease;
+            padding: 15px;
+        }
+
+        .container { width: 100%; max-width: 720px; text-align: center; }
+        .brand-header { margin-bottom: 15px; }
+        .brand-tagline { font-size: 0.55rem; letter-spacing: 0.5rem; text-transform: uppercase; color: var(--text-sub); margin-bottom: 8px; display: block; }
+        .brand-title { font-size: calc(1.8rem + 1.5vw); letter-spacing: 0.3rem; text-transform: uppercase; color: var(--text-main); font-weight: 300; }
+        .brand-title span { color: var(--apple-blue); font-weight: 900; }
+
+        .theme-switcher { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .theme-dot { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 4px 10px var(--shadow-color); }
+
+        .viz-box { display: flex; justify-content: center; align-items: center; gap: 3px; height: 50px; margin-bottom: 15px; }
+        .bar { width: 3px; height: 4px; background: var(--text-sub); border-radius: 10px; transition: height 0.1s ease; }
+
+        .glass-wrapper {
+            background: var(--glass-bg); backdrop-filter: blur(40px) saturate(210%);
+            -webkit-backdrop-filter: blur(40px) saturate(210%); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px; padding: 20px; box-shadow: 0 30px 60px var(--shadow-color); margin-bottom: 20px;
+        }
+
+        .glass-editor {
+            height: 250px; width: 100%; text-align: left; font-size: 1.25rem; line-height: 1.6; color: var(--text-main);
+            outline: none; overflow-y: auto; border-radius: 20px; padding: 15px; background: var(--editor-bg);
+            scrollbar-width: none; border: none;
+        }
+
+        .interim { color: var(--text-sub); opacity: 0.6; }
+
+        .btn-group { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+            justify-content: center; 
+        }
+
+        @media (min-width: 480px) {
+            .btn-group { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .btn {
+            padding: 15px 5px; border-radius: 15px; border: none; font-size: 0.75rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.05rem; cursor: pointer; background: var(--glass-bg);
+            color: var(--text-main); box-shadow: 0 4px 10px var(--shadow-color);
+            transition: all 0.2s ease;
+        }
+
+        .btn:active { transform: scale(0.9); background: #d1d1d6; }
+        .btn-start.active { background: var(--apple-red); color: white; animation: pulse 1.5s infinite; }
+        .btn-legacy { background: var(--apple-blue); color: white; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 59, 48, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+        }
+
+        .footer { margin-top: 30px; font-size: 0.55rem; color: var(--text-sub); letter-spacing: 0.2rem; text-transform: uppercase; }
+    </style>
+</head>
+<body id="mainBody">
+
+<div class="container">
+    <div class="brand-header">
+        <span class="brand-tagline">Universal Voice Script</span>
+        <h1 class="brand-title">GAGANA <span>SCRIPT</span></h1>
+    </div>
+
+    <div class="theme-switcher">
+        <div class="theme-dot" style="background: #f5f5f7;" onclick="setTheme('light')"></div>
+        <div class="theme-dot" style="background: #1c1c1e;" onclick="setTheme('dark')"></div>
+        <div class="theme-dot" style="background: #2c3e50;" onclick="setTheme('glass')"></div>
+    </div>
+
+    <div id="viz" class="viz-box"></div>
+
+    <div class="glass-wrapper">
+        <div id="output" class="glass-editor" contenteditable="true" spellcheck="false"></div>
+    </div>
+
+    <div class="btn-group">
+        <button id="start-btn" class="btn btn-start">Record</button>
+        <button id="copy-unicode" class="btn">Unicode</button>
+        <button id="copy-legacy" class="btn btn-legacy">Legacy</button>
+        <button id="clear-btn" class="btn">Clear</button>
+    </div>
+
+    <div class="footer">ENGINEERED BY <b>SADEW GAGANA</b></div>
+</div>
+
+<script>
+    const output = document.getElementById('output');
+    const startBtn = document.getElementById('start-btn');
+    const vizBox = document.getElementById('viz');
+
+    function setTheme(theme) {
+        document.getElementById('mainBody').className = '';
+        if(theme === 'dark') document.getElementById('mainBody').classList.add('dark-mode');
+        if(theme === 'glass') document.getElementById('mainBody').classList.add('glass-dark');
+    }
+
+    // Mapping for Legacy Fonts
+    const dlMap = {'අ':'w','ආ':'wd','ඇ':'we','ඈ':'wE','ඉ':' b','ඊ':' B','උ':' u','ඌ':' U','එ':' t','ඒ':' T','ඔ':' o','ඕ':' O','ක':'l','ඛ':'L','ග':'u','ඝ':'U','ච':'p','ඡ':'P','ජ':'t','ඣ':'T','ට':'g','ඨ':'G','ඩ':'v','ඪ':'V','ණ':'K','ත':'n','ථ':'N','ද':'o','ධ':'O','න':'k','ප':'m','ඵ':'M','බ':'nq','භ':'Nq','ම':'u','ය':'h','ර':'r','ල':'v','ව':'j','ශ':'Y','ෂ':'S','ස':'i','හ':'y','ළ':'V','ෆ':'f','ං':'x','ඃ':'X','ා':'d','ැ':'e','ෑ':'E','ි':'s','ී':'S','ු':'q','ූ':'Q','්':'a'};
+    const fmMap = {'අ':'w','ආ':'wd','ඇ':'we','ඈ':'wE','ඉ':' b','ඊ':' B','උ':' u','ඌ':' U','එ':' t','ඒ':' T','ඔ':' o','ඕ':' O','ක':'l','ඛ':'L','ග':'u','ඝ':'U','ච':'p','ඡ':'P','ජ':'t','ඣ':'T','ට':'g','ඨ':'G','ඩ':'v','ඪ':'V','ණ':'K','ත':'n','ථ':'N','ද':'o','ධ':'O','න':'k','ප':'m','ඵ':'M','බ':'nq','භ':'Nq','ම':'u','ය':'h','ර':'r','ල':'v','ව':'j','ශ':'Y','ෂ':'S','ස':'i','හ':'y','ළ':'V','ෆ':'f','ං':'x','ඃ':'X','ා':'d','ැ':'e','ෑ':'E','ි':'s','ී':'S','ු':'q','ූ':'Q','්':'a'};
+
+    function convertToLegacy(text) {
+        if (!text) return "";
+        let dl = text, fm = text;
+
+        // DL Logic
+        dl = dl.replace(/([\u0D80-\u0DC6])\u0DDA/g, 'f$1dda'); 
+        dl = dl.replace(/([\u0D80-\u0DC6])\u0DDC/g, 'f$1d');   
+        dl = dl.replace(/([\u0D80-\u0DC6])\u0DD9/g, 't$1');    
+        dl = dl.replace(/([\u0D80-\u0DC6])\u0DDB/g, 'T$1');
+        let dlFinal = dl.split('').map(char => dlMap[char] || char).join('');
+
+        // FM Logic (Simplified for basic FM fonts)
+        fm = fm.replace(/([\u0D80-\u0DC6])\u0DDA/g, 'f$1da'); 
+        fm = fm.replace(/([\u0D80-\u0DC6])\u0DDC/g, 'f$1d');   
+        fm = fm.replace(/([\u0D80-\u0DC6])\u0DD9/g, 'f$1');    
+        fm = fm.replace(/([\u0D80-\u0DC6])\u0DDB/g, 'I$1'); 
+        let fmFinal = fm.split('').map(char => fmMap[char] || char).join('');
+
+        // මම දැනට DL logic එක default දෙනවා. 
+        // ඔයාට FM ඕනේ නම් fmFinal එක return කරන්න පුළුවන්.
+        return dlFinal; 
+    }
+
+    for(let i=0; i<30; i++) {
+        let b = document.createElement('div'); b.className = 'bar'; vizBox.appendChild(b);
+    }
+    const bars = document.querySelectorAll('.bar');
+
+    let isRecording = false;
+    let audioContext, analyser, dataArray;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'si-LK';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    async function toggleRecording() {
+        if(!isRecording) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new AudioContext();
+                analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                analyser.fftSize = 64;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                recognition.start();
+                isRecording = true;
+                startBtn.innerText = "Stop";
+                startBtn.classList.add('active');
+                draw();
+            } catch(e) { alert("Mic access denied!"); }
+        } else {
+            recognition.stop();
+            isRecording = false;
+            startBtn.innerText = "Record";
+            startBtn.classList.remove('active');
+            bars.forEach(b => b.style.height = '4px');
+        }
+    }
+
+    function draw() {
+        if(!isRecording) return;
+        requestAnimationFrame(draw);
+        analyser.getByteFrequencyData(dataArray);
+        const mid = Math.floor(bars.length / 2);
+        bars.forEach((bar, i) => {
+            let dist = Math.abs(i - mid);
+            let val = dataArray[dist % dataArray.length];
+            let height = Math.max(4, (val / 255) * (45 - dist * 1.5)); 
+            bar.style.height = height + 'px';
+            bar.style.background = `linear-gradient(to bottom, var(--apple-blue), #5ac8fa)`;
+        });
+    }
+
+    recognition.onresult = (event) => {
+        let interimText = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+                insertText(event.results[i][0].transcript + " ", true);
+            } else {
+                interimText += event.results[i][0].transcript;
+            }
+        }
+        if (interimText !== "") insertText(interimText, false);
+    };
+
+    function insertText(text, isFinal) {
+        const oldInterim = output.querySelector('.interim');
+        if (oldInterim) oldInterim.remove();
+        const sel = window.getSelection();
+        if (sel.rangeCount === 0) return;
+        let range = sel.getRangeAt(0);
+        if (isFinal) {
+            range.deleteContents(); 
+            const textNode = document.createTextNode(text);
+            range.insertNode(textNode);
+            range.setStartAfter(textNode);
+            range.collapse(true);
+        } else {
+            const interimSpan = document.createElement('span');
+            interimSpan.className = 'interim';
+            interimSpan.innerText = text;
+            const tempRange = range.cloneRange();
+            tempRange.deleteContents();
+            tempRange.insertNode(interimSpan);
+            range.setStartAfter(interimSpan);
+            range.collapse(true);
+        }
+        sel.removeAllRanges();
+        sel.addRange(range);
+        output.scrollTop = output.scrollHeight;
+    }
+
+    startBtn.onclick = toggleRecording;
+    document.getElementById('clear-btn').onclick = () => { output.innerHTML = ""; };
+    document.getElementById('copy-unicode').onclick = () => { navigator.clipboard.writeText(output.innerText); alert("Unicode Copied!"); };
+    document.getElementById('copy-legacy').onclick = () => { 
+        navigator.clipboard.writeText(convertToLegacy(output.innerText)); 
+        alert("Legacy Copied! (Optimized for DL-Ariel)"); 
+    };
+
+    recognition.onend = () => { if(isRecording) recognition.start(); };
+</script>
+</body>
+</html>
